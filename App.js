@@ -1,69 +1,52 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, Button, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
+
+import NoteItem from './components/NoteItem';
+import NoteAdder from './components/NoteAdder';
 
 export default function App() {
-  const [newNote, setNote] = useState('')
-  const [notes, setNotes] = useState([])
+  const [notes, setNotes] = useState([]);
 
-  /*
-  function newNoteHandler( enteredText ) {
-    setNote(enteredText);
-  } */
-  const newNoteHandler = (enteredText) => {
-    setNote(enteredText)
-  }
-  const addNoteHandler = () => {
+  const addNoteHandler = newNote => {
     console.log("processing note: " + newNote);
     setNotes([...notes, { key: Math.random().toString(), value: newNote }])
     // setNotes(notes => [...notes, newNote]) - teoretycznie to powyżej może zaciągnąć nieaktualną listę
     console.log("note successfully added to the list");
   }
 
-  /*
-  function textChanger() {
-    if (defaultText == "bajo jajo")
-      changeDefaultText("pryncypałki");
-    else if (defaultText == "pryncypałki")
-    changeDefaultText("print('dupa');");
-    else
-      changeDefaultText("bajo jajo");
+  const removeNoteHandler = noteKey => {
+    console.log("removing note: " + noteKey);
+    setNotes(notes => {
+      return notes.filter((note) => note.key != noteKey)
+    })
+    console.log("note successfully removed");
   }
-  */
 
   return (
     <View style={styles.mainView}>
-      <View title='input bar' style={styles.inputBar}>
-        <View style={{ backgroundColor: "#aaa", padding: 3, flex: 1, }}>
-          <TextInput
-            placeholder="Wprowadź treść notatki..."
-            onChangeText={newNoteHandler}
-            value={newNote}
-            style={{ opacity: 0.9, color: 'black' }}
+      <NoteAdder onAddNote={addNoteHandler} />
+
+      {notes.length ?   // wyświetlanie listy notatek lub komunikatu o ich braku
+        <View style={{flex: 1}}>
+          <FlatList title='list of notes'
+            // style={{ backgroundColor: "#d5c5a3" }}
+            data={notes}
+            renderItem={itemData =>
+              <NoteItem
+                noteKey={itemData.item.key}
+                onDelete={removeNoteHandler}
+                value={itemData.item.value}
+              />
+            }
           />
+          <Text style={{textAlign: 'center', paddingVertical: 15}}> Aby usunąć element z listy, przytrzymaj go przez 3 sekundy. </Text>
         </View>
-        <View title='spacer' style={{ width: 10 }} />
-        <Button
-          title="Dodaj"
-          onPress={addNoteHandler}
-        />
-      </View>
-      {notes.length ?
-        <FlatList title='list of notes'
-          style={{ backgroundColor: "#ceab69" }}
-          data={notes}
-          renderItem={itemData => (
-            <View>
-              <Text style={styles.noteListItem}>{itemData.item.value}</Text>
-            </View>
-          )}
-        />
         :
-        <View title='empty list feedback' style={{ padding: 30, backgroundColor: '#eeeee4', textAlign: 'center' }}>
-          <Text> Lista jest pusta. Możesz dodać do niej elementy powyżej. </Text>
+        <View title='empty list feedback' style={{ padding: 30, backgroundColor: '#eeeee4' }}>
+          <Text style={{textAlign: 'center'}}> Lista jest pusta. Możesz dodać do niej elementy powyżej. </Text>
         </View>
       }
-
     </View>
     /*
     <View style={styles.mainView}>
@@ -77,29 +60,12 @@ export default function App() {
 
 const styles = StyleSheet.create({
   mainView: {
-    // flex: 1,
-    backgroundColor: '#eee',
+    flex: 1,
+    backgroundColor: '#ede8d9',
     // justifyContent: 'center',
     // alignItems: 'center',
     paddingTop: 50,
     paddingHorizontal: 30,
-    paddingBottom: 100
-  },
-  inputBar: {
-    height: 50,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    marginBottom: 25,
-    //margin: 10,
-    //padding: 20,
-  },
-  noteListItem: {
-    padding: 3,
-    marginVertical: 5,
-    backgroundColor: "#dfc183",
-    borderColor: "#b98a3f",
-    borderWidth: 1,
-    marginHorizontal: 20,
+    paddingBottom: 30,
   },
 });
