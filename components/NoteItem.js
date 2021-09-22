@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableHighlight } from 'react-native';
 
 const NoteItem = props => {
-    return (
+    const [noteOpacity, setNoteOpacity] = useState(0.65);
+        return (
         <TouchableHighlight
-        activeOpacity={0.65}
-        underlayColor={'#dad1b3'}
-        onLongPress={() => props.onDelete(props.noteKey)}>
-            <View style={{backgroundColor: "#d5c5a3"}}>
-                <Text style={styles.noteListItem}>{props.value}</Text>
+            activeOpacity={0.65}
+            underlayColor={'#dad1b3'}
+            onLongPress={() => props.onDelete(props.noteKey)}
+            onPress={() => {
+                if (noteOpacity == 0.65) {
+                    setNoteOpacity(0.15);
+                    console.log("Opacity changed to " + 0.15);
+                } else {
+                    setNoteOpacity(0.65)
+                    console.log("Opacity changed to " + 0.65);
+                }
+            }
+            }>
+            <View style={{ backgroundColor: "#d5c5a3" }}>
+                <Text style={[styles.noteListItem, {opacity: noteOpacity}]}>{props.value}</Text>
             </View>
         </TouchableHighlight>
     );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Modal, Touchable, Text, TouchableOpacity } from 'react-native';
 
 const NoteAdder = props => {
   const [newNote, setNote] = useState('');
@@ -13,34 +13,58 @@ const NoteAdder = props => {
   }
 
   return (
-    <View title='input bar' style={styles.inputBar}>
-      <View style={{ backgroundColor: "#bbb", padding: 3, flex: 1, }}>
-        <TextInput
-          placeholder="Wprowadź treść notatki..."
-          onChangeText={newNoteHandler}
-          value={newNote}
-          style={{ opacity: 0.9, color: 'black' }}
-        />
+    <Modal visible={props.visible} transparent={true} animationType='slide' >
+      <View style={{ flex: 1, backgroundColor: 'black', opacity: 0 }}>
+        <TouchableOpacity onPress={props.onCancelAddingNote} style={{ width: '100%', height: "100%" }} />
       </View>
-      <View title='spacer' style={{ width: 10 }} />
-      <Button
-        title="Dodaj"
-        onPress={() => props.onAddNote(newNote)}
-      />
-    </View>
+      <View title='input bar' style={styles.inputBar}>
+        <View width={'80%'}>
+          <View style={{ backgroundColor: "#bbb", padding: 3, marginBottom: 10, width: '100%' }}>
+            <TextInput
+              placeholder="Wprowadź treść notatki..."
+              onChangeText={newNoteHandler}
+              value={newNote}
+              style={{ opacity: 0.9, color: 'black', }}
+            />
+          </View>
+          <View style={styles.buttons}>
+            <View style={{ flex: 1 }} />
+            <Button
+              title="Anuluj"
+              color='red'
+              onPress={() => {
+                props.onCancelAddingNote();
+                setNote('');
+              }}
+            />
+            <View width={10} />
+            <Button
+              title="Dodaj notatkę"
+              onPress={() => {
+                props.onAddNote(newNote);
+                setNote('');
+              }}
+            />
+          </View>
+        </View>
+
+      </View>
+    </Modal>
+
   );
 };
 
 const styles = StyleSheet.create({
   inputBar: {
-    height: 50,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 25,
-    //margin: 10,
-    //padding: 20,
+    flex: 1,
+    backgroundColor: '#ECDDAD',
   },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  }
 });
 
 export default NoteAdder;
